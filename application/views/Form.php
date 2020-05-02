@@ -116,6 +116,32 @@
 													<label>Email <small>(required)</small></label>
 													<input name="email" type="email" class="form-control" placeholder="JuanCruz@email.com">
 												</div>
+												<hr>
+												<label>Is the inquiry about your enrolled child? <small>(required)</small></label>
+												<div class="radio">
+													<label>
+														<input type="radio" class="childRadio" name="optionsRadios">
+														Yes
+													</label>
+												</div>
+												<div class="radio">
+													<label>
+														<input type="radio" class="childRadio" name="optionsRadios" checked="true">
+														No
+													</label>
+												</div>
+												<div class="form-group">
+													<label for="exampleFormControlSelect1">Select the student's education level</label>
+													<select class="form-control" id="exampleFormControlSelect1">
+														<option>Basic Education</option>
+														<option>Senior Highschool</option>
+														<option>Higher Education</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<label>Student Number <small>(required)</small></label>
+													<input name="studentnumber" type="number" class="form-control" placeholder="20200000">
+												</div>
 											</div>
 										</div>
 		                            </div>
