@@ -88,7 +88,7 @@
 			                            <li>
 											<a href="#account" data-toggle="tab">
 												<div class="icon-circle">
-													<i class="ti-settings"></i>
+													<i class="ti-book"></i>
 												</div>
 												Subject
 											</a>
@@ -96,7 +96,7 @@
 			                            <li>
 											<a href="#address" data-toggle="tab">
 												<div class="icon-circle">
-													<i class="ti-map"></i>
+													<i class="ti-email"></i>
 												</div>
 												Inquiry
 											</a>
@@ -127,7 +127,7 @@
 		                                            <div class="choice" data-toggle="wizard-checkbox">
 		                                                <input type="checkbox" name="jobb" value="Design">
 		                                                <div class="card card-checkboxes card -hover-effect">
-		                                                    <i class="ti-paint-roller"></i>
+		                                                    <i class="ti-pencil-alt"></i>
 															<p>Admission</p>
 		                                                </div>
 		                                            </div>
@@ -136,7 +136,7 @@
 		                                            <div class="choice" data-toggle="wizard-checkbox">
 		                                                <input type="checkbox" name="jobb" value="Code">
 		                                                <div class="card card-checkboxes card-hover-effect">
-		                                                    <i class="ti-pencil-alt"></i>
+		                                                    <i class="ti-credit-card"></i>
 															<p>Finance</p>
 		                                                </div>
 		                                            </div>
@@ -145,7 +145,7 @@
 		                                            <div class="choice" data-toggle="wizard-checkbox">
 		                                                <input type="checkbox" name="jobb" value="Develop">
 		                                                <div class="card card-checkboxes card-hover-effect">
-		                                                    <i class="ti-star"></i>
+		                                                    <i class="ti-ruler-pencil"></i>
 															<p>Grades</p>
 		                                                </div>
 		                                            </div>
@@ -154,7 +154,7 @@
 		                                            <div class="choice" data-toggle="wizard-checkbox">
 		                                                <input type="checkbox" name="jobb" value="Develop">
 		                                                <div class="card card-checkboxes card-hover-effect">
-		                                                    <i class="ti-star"></i>
+		                                                    <i class="ti-info-alt"></i>
 															<p>Others</p>
 		                                                </div>
 		                                            </div>
