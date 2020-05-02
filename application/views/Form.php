@@ -68,7 +68,7 @@
 		                <!--        You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure"          -->
 
 		                    	<div class="wizard-header text-center">
-		                        	<h3 class="wizard-title">SUBMIT YOUR INQUIRY</h3>
+		                        	<h1 class="wizard-title">SUBMIT YOUR INQUIRY</h1>
 									<p class="category">Fill out the following fields, submit, and wait for a reply to your email</p>
 		                    	</div>
 
