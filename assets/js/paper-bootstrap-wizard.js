@@ -35,8 +35,25 @@
 
 searchVisible = 0;
 transparent = true;
+var captchaResponse = [];
 
         $(document).ready(function(){
+
+            
+            $('.formsubmit').click(function(e){
+
+                
+                captchaResponse = grecaptcha.getResponse();
+                if(captchaResponse.length){
+                    $('.captchaMessage').html('');
+                    $('#inquiryform').submit();
+                }else{
+                    $('.captchaMessage').html('Please verify reCAPTCHA below');
+                }
+                e.preventDefault();
+
+            });
+
 
             /*  Activate the tooltips      */
             $('[rel="tooltip"]').tooltip();
@@ -44,19 +61,54 @@ transparent = true;
             // Code for the Validator
             var $validator = $('.wizard-card form').validate({
         		  rules: {
-        		    firstname: {
-        		      required: true,
-        		      minlength: 3
-        		    },
-        		    lastname: {
-        		      required: true,
-        		      minlength: 3
+        		    fullname: {
+        		        required: true
         		    },
         		    email: {
-        		      required: true
-        		    }
+        		        required: true
+                    },
+                    studentlevel: {
+                        required: true
+                    },
+                    studentnumber: {
+                        required: true
+                    },
+                    'concern[]': {
+                        required: true
+                    },
+                    subject: {
+                        required: true
+                    },
+                    inquiry: {
+                        required: true
+                    },
                 },
-        	});
+                messages: {
+                    'concern[]': "Please Select an Inquiry Topic"
+                },
+                errorPlacement: function(error, element) {
+                    if($(element).parent('div').parent('div').parent('div').attr('id') == 'choiceparent'){
+        
+                        parent = $('#choiceparent');
+                        $(parent).find('h4').html(error[0]['textContent']);
+                    }else{
+                        error.insertAfter(element);
+                    }
+                    //console.log($(element).parent('div').parent('div').parent('div').attr('id'));
+                },
+                success: function(){
+                    $('#choiceparent').find('h4').html('');
+                }
+            });
+            
+            $('.studentoption').change(function(){
+                if($(this).val() == 1){
+                    toggle_AdditionalFormInfo(1);
+                }else{
+                    toggle_AdditionalFormInfo(0);
+                }
+            });
+        
 
             // Wizard Initialization
           	$('.wizard-card').bootstrapWizard({
@@ -140,8 +192,11 @@ transparent = true;
                         $(this).removeClass('active');
                         $(this).find('[type="checkbox"]').removeAttr('checked');
                     } else {
+                        $('.choice').removeClass('active');
+                        $('.choice').find('[type="checkbox"]').prop('checked', false);
                         $(this).addClass('active');
-                        $(this).find('[type="checkbox"]').attr('checked','true');
+                        $(this).find('[type="checkbox"]').prop('checked', true);
+                        subjectPreset($(this).find('[type="checkbox"]').val());
                     }
                 });
 
@@ -178,6 +233,32 @@ transparent = true;
         	};
         };
 
+        function toggle_AdditionalFormInfo(toggle = 0){
+            if(toggle == 1){
+                $('.additionnal_basicinfo').html('\
+                    <div class="form-group">\
+                    <label for="exampleFormControlSelect1">Select the student\'s education level</label>\
+                    <select class="form-control" name="studentlevel" id="exampleFormControlSelect1">\
+                        <option>Basic Education</option>\
+                        <option>Senior Highschool</option>\
+                        <option>Higher Education</option>\
+                    </select>\
+                    </div>\
+                    <div class="form-group">\
+                        <label>Student Number <small>(required)</small></label>\
+                        <input name="studentnumber" type="number" class="form-control" placeholder="20200000">\
+                    </div>\
+                ');
+            }
+            else{
+                $('.additionnal_basicinfo').html('');
+            }
+        };
+
+        function subjectPreset(subject = ''){
+            $('#SubjectInput').val(subject);
+            
+        }
 
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

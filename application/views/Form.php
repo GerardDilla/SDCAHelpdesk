@@ -64,7 +64,7 @@
 		            <div class="wizard-container">
 
 		                <div class="card wizard-card" data-color="orange" id="wizardProfile">
-		                    <form action="" method="">
+		                    <form action="" method="POST" id="inquiryform">
 		                <!--        You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure"          -->
 
 		                    	<div class="wizard-header text-center">
@@ -110,7 +110,7 @@
 											<div class="col-sm-10 col-sm-offset-1">
 												<div class="form-group">
 													<label>Name <small>(required)</small></label>
-													<input name="firstname" type="text" class="form-control" placeholder="Juan Cruz...">
+													<input name="fullname" type="text" class="form-control" placeholder="Juan Cruz...">
 												</div>
 												<div class="form-group">
 													<label>Email <small>(required)</small></label>
@@ -120,27 +120,18 @@
 												<label>Is the inquiry about your enrolled child? <small>(required)</small></label>
 												<div class="radio">
 													<label>
-														<input type="radio" class="childRadio" name="optionsRadios">
+														<input type="radio" class="childRadio studentoption" name="studentoption" value="1">
 														Yes
 													</label>
 												</div>
 												<div class="radio">
 													<label>
-														<input type="radio" class="childRadio" name="optionsRadios" checked="true">
+														<input type="radio" class="childRadio studentoption" name="studentoption" value="0" checked="true">
 														No
 													</label>
 												</div>
-												<div class="form-group">
-													<label for="exampleFormControlSelect1">Select the student's education level</label>
-													<select class="form-control" id="exampleFormControlSelect1">
-														<option>Basic Education</option>
-														<option>Senior Highschool</option>
-														<option>Higher Education</option>
-													</select>
-												</div>
-												<div class="form-group">
-													<label>Student Number <small>(required)</small></label>
-													<input name="studentnumber" type="number" class="form-control" placeholder="20200000">
+												<div class="additionnal_basicinfo">
+
 												</div>
 											</div>
 										</div>
@@ -148,11 +139,12 @@
 		                            <div class="tab-pane" id="account">
 		                                <h5 class="info-text"> What's the subject of your concern? (Click one of the boxes below) </h5>
 		                                <div class="row">
-		                                    <div class="col-sm-8 col-sm-offset-2">
+		                                    <div class="col-sm-8 col-sm-offset-2" id="choiceparent">
+												<h4></h4>
 		                                        <div class="col-sm-4">
 		                                            <div class="choice" data-toggle="wizard-checkbox">
-		                                                <input type="checkbox" name="jobb" value="Design">
-		                                                <div class="card card-checkboxes card -hover-effect">
+		                                                <input type="checkbox" class="choice" name="concern[]" value="Admission">
+		                                                <div class="card card-checkboxes card-hover-effect">
 		                                                    <i class="ti-pencil-alt"></i>
 															<p>Admission</p>
 		                                                </div>
@@ -160,7 +152,7 @@
 		                                        </div>
 		                                        <div class="col-sm-4">
 		                                            <div class="choice" data-toggle="wizard-checkbox">
-		                                                <input type="checkbox" name="jobb" value="Code">
+		                                                <input type="checkbox" class="choice" name="concern[]" value="Finance">
 		                                                <div class="card card-checkboxes card-hover-effect">
 		                                                    <i class="ti-credit-card"></i>
 															<p>Finance</p>
@@ -169,7 +161,7 @@
 		                                        </div>
 		                                        <div class="col-sm-4">
 		                                            <div class="choice" data-toggle="wizard-checkbox">
-		                                                <input type="checkbox" name="jobb" value="Develop">
+		                                                <input type="checkbox" class="choice" name="concern[]" value="Grades">
 		                                                <div class="card card-checkboxes card-hover-effect">
 		                                                    <i class="ti-ruler-pencil"></i>
 															<p>Grades</p>
@@ -178,7 +170,7 @@
 												</div>
 												<div class="col-sm-4 col-sm-offset-4">
 		                                            <div class="choice" data-toggle="wizard-checkbox">
-		                                                <input type="checkbox" name="jobb" value="Develop">
+		                                                <input type="checkbox" class="choice" name="concern[]" value="Others">
 		                                                <div class="card card-checkboxes card-hover-effect">
 		                                                    <i class="ti-info-alt"></i>
 															<p>Others</p>
@@ -196,16 +188,15 @@
 											<div class="col-sm-12">
 												<div class="form-group">
 													<label>Subject <small>(required)</small></label>
-													<input name="email" type="text" class="form-control" placeholder="">
+													<input name="subject" id="SubjectInput" type="text" class="form-control" placeholder="">
 												</div>
 												<div class="form-group">
 													<label for="exampleFormControlTextarea1">Inquiry <small>(required)</small></label>
-													<textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+													<textarea class="form-control" name="inquiry" id="exampleFormControlTextarea1" rows="3"></textarea>
 												</div>
-												<form action="?" method="POST">
-													<div class="g-recaptcha" data-sitekey="6LeWcSQUAAAAAN0dGTGNeBZkICUKTIrPUDfTA1Gt"></div>
-													<br/>
-												</form>
+												<h5 class="captchaMessage"></h5>
+												<div class="g-recaptcha" data-sitekey="6LeWcSQUAAAAAN0dGTGNeBZkICUKTIrPUDfTA1Gt"></div>
+												<br/>
 		                                    </div>
 
 		                                </div>
@@ -214,7 +205,7 @@
 		                        <div class="wizard-footer">
 		                            <div class="pull-right">
 		                                <input type='button' class='btn btn-next btn-fill btn-warning btn-wd' name='next' value='Next' />
-		                                <input type='submit' class='btn btn-finish btn-fill btn-warning btn-wd' name='finish' value='Finish' />
+		                                <input type='submit' class='btn btn-finish btn-fill btn-warning btn-wd formsubmit' name='finish' value='Finish' />
 		                            </div>
 
 		                            <div class="pull-left">
