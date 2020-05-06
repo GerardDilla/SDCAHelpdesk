@@ -3,23 +3,118 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Main extends CI_Controller {
 
-	/**
-	 * Index Page for this controller.
-	 *
-	 * Maps to the following URL
-	 * 		http://example.com/index.php/welcome
-	 *	- or -
-	 * 		http://example.com/index.php/welcome/index
-	 *	- or -
-	 * Since this controller is set as the default controller in
-	 * config/routes.php, it's displayed at http://example.com/
-	 *
-	 * So any other public methods not prefixed with an underscore will
-	 * map to /index.php/welcome/<method_name>
-	 * @see https://codeigniter.com/user_guide/general/urls.html
-	 */
+    public function __construct() 
+    {
+		parent::__construct();
+		$this->inquiry_choices = array(
+			'Admission' => 'gpdilla@sdca.edu.ph',
+			'Finance' => 'gpdilla@sdca.edu.ph',
+			'Grades' => 'gpdilla@sdca.edu.ph',
+			'Others' => 'gpdilla@sdca.edu.ph',
+		);
+		$this->load->library('email');
+
+		$this->inputs = array();
+	}
 	public function index()
 	{
 		$this->load->view('Form');
+	}
+	public function Inquire(){
+
+		$this->form_validation->set_rules('fullname', 'Name', 'required');
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+		$this->form_validation->set_rules('studentoption', 'Student Education Level', 'required',
+			array('required' => 'You must choose whether the concern is about an enrolled student')
+		);
+		$option = $this->input->post('studentoption');
+		if($option == 1){
+			$this->form_validation->set_rules('studentlevel', 'Student Level', 'required');
+			$this->form_validation->set_rules('studentnumber', 'Student Number', 'required');
+		}
+		$this->form_validation->set_rules('concern[]', 'Concern Type', 'required');
+		$this->form_validation->set_rules('subject', 'Subject', 'required');
+		$this->form_validation->set_rules('inquiry', 'Inquiry', 'required');
+
+		if($this->form_validation->run() == TRUE){
+
+			//Compile inputs
+			$this->inputs['name'] = $this->input->post('fullname');
+			$this->inputs['email'] = $this->input->post('email');
+			$this->inputs['studentoption'] = $this->input->post('studentoption');
+			$this->inputs['studentlevel'] = $this->inputs['studentoption'] == 1 ? $this->input->post('studentlevel') : 'N/A';
+			$this->inputs['studentnumber'] = $this->inputs['studentoption'] == 1 ? $this->input->post('studentnumber') : 'N/A';
+			$this->inputs['concernEmail'] = $this->inquiry_choices[$this->input->post('concern')[0]];
+			$this->inputs['subject'] = $this->input->post('subject');
+			$this->inputs['inquiry'] = $this->input->post('inquiry');
+			echo json_encode($this->inputs);
+			//Save to database 
+
+			//Email to concerned
+			$this->SendinquirynMail($this->inputs);
+
+		}else{
+			$this->session->set_flashdata('ErrorMessage',validation_errors());
+			redirect('Main');
+		}
+
+
+	}
+	private function SendinquirynMail($inputs){
+
+		$mail_status = 1;
+		//Using SMTP2GO // For local use
+
+		//Server's SMTP config
+		$config['protocol']    = 'smtp';
+
+        $config['smtp_host']    = 'ssl://smtp.gmail.com';
+
+        $config['smtp_port']    = '465';
+
+        $config['smtp_timeout'] = '7';
+
+        $config['smtp_user']    = 'webmailer@sdca.edu.ph';
+
+        //$config['smtp_pass']    = 'dgojehpfiftlzoqy';
+		$config['smtp_pass']    = 'sdca2017';
+
+        $config['charset']    = 'utf-8';
+
+        $config['newline']    = "\r\n";
+
+        $config['mailtype'] = 'html'; // or html or text
+
+        $config['validation'] = TRUE; // bool whether to validate email or not      
+
+		$this->email->initialize($config);
+
+		$this->email->set_newline("\r\n");
+	
+		
+		
+		$this->email->from('webmailer@sdca.edu.ph', 'St. Dominic College of Asia');
+		$this->email->to($inputs['concernEmail']); 
+		$this->email->subject($inputs['subject']);
+		$this->email->message('
+
+		<b>Inquirer\'s Name:</b> '.$inputs['name'].'<br>
+		<b>Inquirer\'s Email:</b> '.$inputs['email'].'<br>
+		<hr>
+		<b>Student Number:</b> '.$inputs['studentnumber'].'<br>
+		<b>Student Ecducation Level:</b> '.$inputs['studentlevel'].'<br>
+		<hr>
+		<b>Inquiry:</b> <br> '.$inputs['inquiry'].'<br>
+
+		');
+		if(!$this->email->send())
+		{
+			$mail_status == 0;
+		}
+		echo $this->email->print_debugger(array('headers'));
+		return $mail_status;
+		//---Uncomment code below to debug---
+		
+
 	}
 }

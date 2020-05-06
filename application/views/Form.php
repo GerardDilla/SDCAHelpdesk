@@ -64,8 +64,8 @@
 		            <div class="wizard-container">
 
 		                <div class="card wizard-card" data-color="orange" id="wizardProfile">
-		                    <form action="" method="POST" id="inquiryform">
-		                <!--        You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure"          -->
+		                    <form action="<?php echo base_url(); ?>index.php/Main/Inquire" method="POST" id="inquiryform">
+		                		<!--You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure"-->
 
 		                    	<div class="wizard-header text-center">
 		                        	<h1 class="wizard-title">SUBMIT YOUR INQUIRY</h1>
@@ -233,5 +233,11 @@
 
 	<!--  More information about jquery.validate here: https://jqueryvalidation.org/	 -->
 	<script src="<?php echo base_url(); ?>assets/js/jquery.validate.min.js" type="text/javascript"></script>
+	
+	<?php if($this->session->flashdata('ErrorMessage')): ?>
+		<script>
+			alert('<?php echo $this->session->flashdata('ErrorMessage'); ?>');
+		</script>
+	<?php endIf; ?>
 
 </html>
