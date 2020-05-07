@@ -41,8 +41,6 @@ var captchaResponse = [];
 
             
             $('.formsubmit').click(function(e){
-
-                
                 captchaResponse = grecaptcha.getResponse();
                 if(captchaResponse.length){
                     $('.captchaMessage').html('');
@@ -100,6 +98,7 @@ var captchaResponse = [];
                     $('#choiceparent').find('h4').html('');
                 }
             });
+            
             
             $('.studentoption').change(function(){
                 if($(this).val() == 1){

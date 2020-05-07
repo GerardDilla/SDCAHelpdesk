@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Main extends CI_Controller {
+class Main extends MY_Controller {
 
     public function __construct() 
     {
@@ -13,12 +13,20 @@ class Main extends CI_Controller {
 			'Others' => 'gpdilla@sdca.edu.ph',
 		);
 		$this->load->library('email');
-
 		$this->inputs = array();
+		$this->message = array(
+			'primary' => '',
+			'secondary' => '',
+		);
 	}
 	public function index()
 	{
-		$this->load->view('Form');
+		$this->render('Form');
+	}
+	public function Done(){
+
+		$this->render('MessagePage');
+
 	}
 	public function Inquire(){
 
@@ -47,15 +55,29 @@ class Main extends CI_Controller {
 			$this->inputs['concernEmail'] = $this->inquiry_choices[$this->input->post('concern')[0]];
 			$this->inputs['subject'] = $this->input->post('subject');
 			$this->inputs['inquiry'] = $this->input->post('inquiry');
-			echo json_encode($this->inputs);
+			//echo json_encode($this->inputs);
 			//Save to database 
 
 			//Email to concerned
-			$this->SendinquirynMail($this->inputs);
+			$mailStatus = $this->SendinquirynMail($this->inputs);
+
+			if($mailStatus == 1){
+
+				$this->message['primary'] = 'THANK YOU FOR SUBMITTING YOUR INQUIRY';
+				$this->message['secondary'] = 'We\'re glad to hear form you! We\'ll reply through the email address you sent us';
+				$this->session->set_flashdata('Message',$this->message);
+
+			}else{
+				
+				$this->message['secondary'] = 'Failed to send inquiry, please try again';
+				$this->session->set_flashdata('Message',$this->message);
+			}
+			redirect('Main/Done');
 
 		}else{
-			$this->session->set_flashdata('ErrorMessage',validation_errors());
-			redirect('Main');
+			$this->message['secondary'] = validation_errors();
+			$this->session->set_flashdata('Message',$this->message);
+			redirect('Main/Done');
 		}
 
 
@@ -105,13 +127,14 @@ class Main extends CI_Controller {
 		<b>Student Ecducation Level:</b> '.$inputs['studentlevel'].'<br>
 		<hr>
 		<b>Inquiry:</b> <br> '.$inputs['inquiry'].'<br>
-
+		<hr>
+		<i>Dont reply on this email, thank you.</i>
 		');
 		if(!$this->email->send())
 		{
 			$mail_status == 0;
 		}
-		echo $this->email->print_debugger(array('headers'));
+		//echo $this->email->print_debugger(array('headers'));
 		return $mail_status;
 		//---Uncomment code below to debug---
 		
