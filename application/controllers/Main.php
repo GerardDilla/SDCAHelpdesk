@@ -120,15 +120,16 @@ class Main extends MY_Controller {
 		$this->email->subject($inputs['subject']);
 		$this->email->message('
 
-		<b>Inquirer\'s Name:</b> '.$inputs['name'].'<br>
-		<b>Inquirer\'s Email:</b> '.$inputs['email'].'<br>
-		<hr>
-		<b>Student Number:</b> '.$inputs['studentnumber'].'<br>
-		<b>Student Ecducation Level:</b> '.$inputs['studentlevel'].'<br>
-		<hr>
-		<b>Inquiry:</b> <br> '.$inputs['inquiry'].'<br>
-		<hr>
-		<i>Dont reply on this email, thank you.</i>
+			<b>Inquirer\'s Name:</b> '.$inputs['name'].'<br>
+			<b>Inquirer\'s Email:</b> '.$inputs['email'].'<br>
+			<hr>
+			<b>Student Number:</b> '.$inputs['studentnumber'].'<br>
+			<b>Student Ecducation Level:</b> '.$inputs['studentlevel'].'<br>
+			<hr>
+			<b>Inquiry:</b> <br> '.$inputs['inquiry'].'<br>
+			<hr>
+			<i>Dont reply on this email, thank you.</i>
+			
 		');
 		if(!$this->email->send())
 		{
