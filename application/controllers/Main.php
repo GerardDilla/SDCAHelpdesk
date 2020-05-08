@@ -13,10 +13,13 @@ class Main extends MY_Controller {
 			'Admission_SHS' => 'shsadmission@sdca.edu.ph',
 
 			'Grade_Registrar' => 'registrar@sdca.edu.ph',
-			'Grade_BED' => 'bedinquiry@sdca.edu.ph',
-			'Grade_SHS' => '',
+			'Grade_BED' => 'academicaffairs@sdca.edu.ph',
+			'Grade_SHS' => 'shsinquiry@sdca.edu.ph',
 			
-			'Finance' => '',
+			'Finance' => array(
+				'main' => 'accounting@sdca.edu.ph',
+				'cc' => 'treasuryoffice@sdca.edu.ph'
+			),
 			'Others' => '',
 		);
 		$this->load->library('email');
@@ -69,16 +72,24 @@ class Main extends MY_Controller {
 			$this->inputs['inquiry'] = $this->input->post('inquiry');
 			$this->inputs['concern'] = $this->input->post('concern')[0];
 			$this->inputs['concernEmail'] = $this->filterEmailConcerned($this->inputs);
-
+			
+			if(is_array($this->inputs['concernEmail'])){
+				$this->inputs['concernEmail_cc'] = $this->inputs['concernEmail']['cc'];
+				$this->inputs['concernEmail'] = $this->inputs['concernEmail']['main'];
+			}
 			//echo json_encode($this->inputs);
 			//Save to database 
 
 			//Email to concerned
-			$mailStatus = $this->SendinquirynMail($this->inputs);
+			//Enable mailing when implementing
+			$mailStatus = 1;//$this->SendinquirynMail($this->inputs);
 
 			if($mailStatus == 1){
 
-				$this->message['primary'] = 'THANK YOU FOR SUBMITTING YOUR INQUIRY';
+				//Remvoe debug message when implementing
+				$this->message['primary'] = 'THANK YOU FOR SUBMITTING YOUR INQUIRY
+				<hr>DEBUG (Shows where the email was sent for testing purposes, will remove when implemented): <br>
+				<br>email: '.$this->inputs['concernEmail'].' <br>cc: '.$this->inputs['concernEmail_cc'];
 				$this->message['secondary'] = 'We\'re glad to hear form you! We\'ll reply through the email address you sent us';
 				$this->session->set_flashdata('Message',$this->message);
 
