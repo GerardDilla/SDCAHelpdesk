@@ -39,7 +39,7 @@ var captchaResponse = [];
 
         $(document).ready(function(){
 
-            
+            $('.studentoption[value="0"]').prop('checked', true);
             $('.formsubmit').click(function(e){
                 captchaResponse = grecaptcha.getResponse();
                 if(captchaResponse.length){
@@ -69,6 +69,9 @@ var captchaResponse = [];
                         required: true
                     },
                     studentnumber: {
+                        required: true
+                    },
+                    studentstrand: {
                         required: true
                     },
                     'concern[]': {
@@ -105,6 +108,15 @@ var captchaResponse = [];
                     toggle_AdditionalFormInfo(1);
                 }else{
                     toggle_AdditionalFormInfo(0);
+                }
+            });
+
+            $('.additionnal_basicinfo').on('change','#studentlevel_select',function(){
+                
+                if($(this).val() == 'Senior Highschool'){
+                    toggle_StrandSelect(1);
+                }else{
+                    toggle_StrandSelect(0);
                 }
             });
         
@@ -236,12 +248,13 @@ var captchaResponse = [];
             if(toggle == 1){
                 $('.additionnal_basicinfo').html('\
                     <div class="form-group">\
-                    <label for="exampleFormControlSelect1">Select the student\'s education level</label>\
-                    <select class="form-control" name="studentlevel" id="exampleFormControlSelect1">\
+                    <label for="studentlevel_select">Select the student\'s education level</label>\
+                    <select class="form-control" name="studentlevel" id="studentlevel_select">\
                         <option>Basic Education</option>\
                         <option>Senior Highschool</option>\
                         <option>Higher Education</option>\
                     </select>\
+                    <div class="strandSelect"></div>\
                     </div>\
                     <div class="form-group">\
                         <label>Student Number <small>(required)</small></label>\
@@ -253,6 +266,24 @@ var captchaResponse = [];
                 $('.additionnal_basicinfo').html('');
             }
         };
+
+        function toggle_StrandSelect(toggle = 0){
+
+            if(toggle == 1){
+                $('.strandSelect').html('\
+                    <label for="studentstrand_select">Select the student\'s education level</label>\
+                    <select class="form-control" name="studentstrand" id="studentstrand_select">\
+                        <option selected="selected" disabled>Select Strand</option>\
+                        <option>Accountancy & Business Management (ABM)</option>\
+                        <option>Humanities & Social Scienece (HUMSS)</option>\
+                        <option>Science, Technology, Engineering & Mathematics (STEM)</option>\
+                        <option>Technical Vocational Track (TVL)</option>\
+                    </select>\
+                ');
+            }else{
+                $('.strandSelect').html('');
+            }
+        }
 
         function subjectPreset(subject = ''){
             $('#SubjectInput').val(subject);

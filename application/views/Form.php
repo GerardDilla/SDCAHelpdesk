@@ -69,7 +69,7 @@
 										</div>
 										<div class="radio">
 											<label>
-												<input type="radio" class="childRadio studentoption" name="studentoption" value="0" checked="true">
+												<input type="radio" class="childRadio studentoption" name="studentoption" value="0">
 												No
 											</label>
 										</div>
