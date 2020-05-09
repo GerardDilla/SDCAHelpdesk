@@ -59,7 +59,6 @@
 											<label>Email <small>(required)</small></label>
 											<input name="email" type="email" class="form-control" placeholder="JuanCruz@email.com">
 										</div>
-										<hr>
 										<label>Is the inquiry about your enrolled child? <small>(required)</small></label>
 										<div class="radio">
 											<label>
@@ -82,8 +81,11 @@
 							<div class="tab-pane" id="account">
 								<h5 class="info-text"> What's the subject of your concern? (Click one of the boxes below) </h5>
 								<div class="row">
+									<div class="col-sm-12">
+										<h4 id="choiceerror"></h4>
+									</div>
 									<div class="col-sm-8 col-sm-offset-2" id="choiceparent">
-										<h4></h4>
+										
 										<div class="col-sm-4">
 											<div class="choice" data-toggle="wizard-checkbox">
 												<input type="checkbox" class="choice" name="concern[]" value="Admission">
@@ -111,12 +113,21 @@
 												</div>
 											</div>
 										</div>
-										<div class="col-sm-4 col-sm-offset-4">
+										<div class="col-sm-4 col-sm-offset-2">
 											<div class="choice" data-toggle="wizard-checkbox">
 												<input type="checkbox" class="choice" name="concern[]" value="Others">
 												<div class="card card-checkboxes card-hover-effect">
 													<i class="ti-info-alt"></i>
 													<p>Others</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<div class="choice" data-toggle="wizard-checkbox">
+												<input type="checkbox" class="choice" name="concern[]" value="Documents">
+												<div class="card card-checkboxes card-hover-effect">
+													<i class="ti-folder"></i>
+													<p>Documents</p>
 												</div>
 											</div>
 										</div>

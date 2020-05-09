@@ -39,7 +39,10 @@ var captchaResponse = [];
 
         $(document).ready(function(){
 
-            $('.studentoption[value="0"]').prop('checked', true);
+            //Initially Checks default choice
+            $('.studentoption[value="1"]').prop('checked', true);
+
+            //Recaptcha verify
             $('.formsubmit').click(function(e){
                 captchaResponse = grecaptcha.getResponse();
                 if(captchaResponse.length){
@@ -51,7 +54,6 @@ var captchaResponse = [];
                 e.preventDefault();
 
             });
-
 
             /*  Activate the tooltips      */
             $('[rel="tooltip"]').tooltip();
@@ -91,7 +93,8 @@ var captchaResponse = [];
                     if($(element).parent('div').parent('div').parent('div').attr('id') == 'choiceparent'){
         
                         parent = $('#choiceparent');
-                        $(parent).find('h4').html(error[0]['textContent']);
+                        $('#choiceerror').html(error[0]['textContent']);
+
                     }else{
                         error.insertAfter(element);
                     }
@@ -101,7 +104,13 @@ var captchaResponse = [];
                     $('#choiceparent').find('h4').html('');
                 }
             });
-            
+
+            //Toggles additional input in form
+            if($("input[name='studentoption']:checked").val() == 1){
+                toggle_AdditionalFormInfo(1);
+            }else{
+                toggle_AdditionalFormInfo(0);
+            }
             
             $('.studentoption').change(function(){
                 if($(this).val() == 1){
@@ -113,14 +122,29 @@ var captchaResponse = [];
 
             $('.additionnal_basicinfo').on('change','#studentlevel_select',function(){
                 
-                if($(this).val() == 'Senior Highschool'){
-                    toggle_StrandSelect(1);
-                }else{
+                var enrolled = 0;
+                if($("input[name='studentoption']:checked").val() == 1){
+                    enrolled = 1;
+                }
+                if($(this).val() == 'Basic Education'){
+                    filterConcernChoices('bed',enrolled);
                     toggle_StrandSelect(0);
                 }
+                else if($(this).val() == 'Senior Highschool'){
+                    filterConcernChoices('shs',enrolled);
+                    toggle_StrandSelect(1);
+                }
+                else if($(this).val() == 'Higher Education'){
+                    filterConcernChoices('hed',enrolled)
+                    toggle_StrandSelect(0);
+                }
+                else{
+                    filterConcernChoices('none',enrolled);
+                    toggle_StrandSelect(0);
+                }
+
             });
         
-
             // Wizard Initialization
           	$('.wizard-card').bootstrapWizard({
                 'tabClass': 'nav nav-pills',
@@ -198,7 +222,7 @@ var captchaResponse = [];
                     $(this).find('[type="radio"]').attr('checked','true');
                 });
 
-                $('[data-toggle="wizard-checkbox"]').click(function(){
+                $('#choiceparent').on('click','[data-toggle="wizard-checkbox"]',function(){
                     if( $(this).hasClass('active')){
                         $(this).removeClass('active');
                         $(this).find('[type="checkbox"]').removeAttr('checked');
@@ -248,8 +272,9 @@ var captchaResponse = [];
             if(toggle == 1){
                 $('.additionnal_basicinfo').html('\
                     <div class="form-group">\
-                    <label for="studentlevel_select">Select the student\'s education level</label>\
+                    <label for="studentlevel_select">Education level</label>\
                     <select class="form-control" name="studentlevel" id="studentlevel_select">\
+                        <option selected="selected" disabled>Select Student Education Level</option>\
                         <option>Basic Education</option>\
                         <option>Senior Highschool</option>\
                         <option>Higher Education</option>\
@@ -258,12 +283,23 @@ var captchaResponse = [];
                     </div>\
                     <div class="form-group">\
                         <label>Student Number <small>(required)</small></label>\
-                        <input name="studentnumber" type="number" class="form-control" placeholder="20200000">\
+                        <input name="studentnumber" type="number" class="form-control">\
                     </div>\
                 ');
             }
             else{
-                $('.additionnal_basicinfo').html('');
+                $('.additionnal_basicinfo').html('\
+                    <div class="form-group">\
+                    <label for="studentlevel_select">Select the student\'s education level</label>\
+                    <select class="form-control" name="studentlevel" id="studentlevel_select">\
+                        <option selected="selected" disabled>Select Student Education Level</option>\
+                        <option>Basic Education</option>\
+                        <option>Senior Highschool</option>\
+                        <option>Higher Education</option>\
+                    </select>\
+                    <div class="strandSelect"></div>\
+                    </div>\
+                ');
             }
         };
 
@@ -283,6 +319,53 @@ var captchaResponse = [];
             }else{
                 $('.strandSelect').html('');
             }
+        };
+
+
+        function filterConcernChoices(choice = 'none', enrolled = 1){
+
+            outputs = {
+                // Value : icon code
+                'Admission':'ti-pencil-alt',
+                'Finance':'ti-credit-card',
+                'Grades':'ti-ruler-pencil',
+                'Others':'ti-info-alt',
+                'Documents':'ti-folder'
+            }
+            if(enrolled == 1){
+                choices = {
+                    'bed':['Admission','Finance','Grades','Others','Documents'],
+                    'shs':['Admission','Finance','Grades','Others','Documents'],
+                    'hed':['Admission','Finance','Grades','Documents'],
+                    'none':['Admission'],
+                };
+            }else{
+                choices = {
+                    'bed':['Admission'],
+                    'shs':['Admission'],
+                    'hed':['Admission'],
+                    'none':['Admission'],
+                };
+            }
+
+            $('#choiceparent').html('');
+            $.each(choices[choice], function( index, value ) {
+               
+                $('#choiceparent').append('\
+                    <div class="col-sm-4 d-flex justify-content-center">\
+                        <div class="choice" data-toggle="wizard-checkbox">\
+                            <input type="checkbox" class="choice" name="concern[]" value="'+value+'">\
+                            <div class="card card-checkboxes card-hover-effect">\
+                                <i class="'+outputs[value]+'"></i>\
+                                <p>'+value+'</p>\
+                            </div>\
+                        </div>\
+                    </div>\
+                ');
+                
+            });
+
+
         }
 
         function subjectPreset(subject = ''){
@@ -290,10 +373,4 @@ var captchaResponse = [];
             
         }
 
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-ga('create', 'UA-46172202-1', 'auto');
-ga('send', 'pageview');

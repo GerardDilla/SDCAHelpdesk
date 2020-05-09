@@ -15,12 +15,17 @@ class Main extends MY_Controller {
 			'Grade_Registrar' => 'registrar@sdca.edu.ph',
 			'Grade_BED' => 'academicaffairs@sdca.edu.ph',
 			'Grade_SHS' => 'shsinquiry@sdca.edu.ph',
+
+			'Other_HED' => 'hedadmission@sdca.edu.ph',
+			'Other_BED' => 'bedinquiry@sdca.edu.ph',
+			'Other_SHS' => 'shsinquiry@sdca.edu.ph',
 			
 			'Finance' => array(
 				'main' => 'accounting@sdca.edu.ph',
 				'cc' => 'treasuryoffice@sdca.edu.ph'
 			),
-			'Others' => '',
+
+			'Documents' => 'registrar@sdca.edu.ph',
 		);
 		$this->load->library('email');
 		$this->inputs = array();
@@ -65,17 +70,19 @@ class Main extends MY_Controller {
 			$this->inputs['name'] = $this->input->post('fullname');
 			$this->inputs['email'] = $this->input->post('email');
 			$this->inputs['studentoption'] = $this->input->post('studentoption');
-			$this->inputs['studentlevel'] = $this->inputs['studentoption'] == 1 ? $this->input->post('studentlevel') : 'N/A';
+			$this->inputs['studentlevel'] = $this->input->post('studentlevel');
 			$this->inputs['studentnumber'] = $this->inputs['studentoption'] == 1 ? $this->input->post('studentnumber') : 'N/A';
 			$this->inputs['studentstrand'] = $this->inputs['studentlevel'] == 'Senior Highschool' ? $this->input->post('studentstrand') : '';
 			$this->inputs['subject'] = $this->input->post('subject');
 			$this->inputs['inquiry'] = $this->input->post('inquiry');
 			$this->inputs['concern'] = $this->input->post('concern')[0];
 			$this->inputs['concernEmail'] = $this->filterEmailConcerned($this->inputs);
-			
 			if(is_array($this->inputs['concernEmail'])){
 				$this->inputs['concernEmail_cc'] = $this->inputs['concernEmail']['cc'];
 				$this->inputs['concernEmail'] = $this->inputs['concernEmail']['main'];
+			}else{
+				$this->inputs['concernEmail_cc'] = '';
+				$this->inputs['concernEmail'] = $this->inputs['concernEmail'];
 			}
 			//echo json_encode($this->inputs);
 			//Save to database 
@@ -88,8 +95,8 @@ class Main extends MY_Controller {
 
 				//Remvoe debug message when implementing
 				$this->message['primary'] = 'THANK YOU FOR SUBMITTING YOUR INQUIRY
-				<hr>DEBUG (Shows where the email was sent for testing purposes, will remove when implemented): <br>
-				<br>email: '.$this->inputs['concernEmail'].' <br>cc: '.$this->inputs['concernEmail_cc'];
+				<hr style="color:#cc0000"><span>DEBUG (Shows where the email was sent for testing purposes, will remove when implemented): <br>
+				<br>email: '.$this->inputs['concernEmail'].' <br>cc: '.$this->inputs['concernEmail_cc'].'</span>';
 				$this->message['secondary'] = 'We\'re glad to hear form you! We\'ll reply through the email address you sent us';
 				$this->session->set_flashdata('Message',$this->message);
 
@@ -98,7 +105,7 @@ class Main extends MY_Controller {
 				$this->message['secondary'] = 'Failed to send inquiry, please try again';
 				$this->session->set_flashdata('Message',$this->message);
 			}
-			
+			//echo json_encode($this->inputs);
 			redirect('Main/Done');
 
 		}else{
@@ -112,74 +119,69 @@ class Main extends MY_Controller {
 	private function filterEmailConcerned($inputs = array()){
 
 		if($inputs['concern'] == 'Admission'){
-			if($inputs['studentoption'] == 1){
-				
-				if($inputs['studentlevel'] == 'Basic Education'){
+			if($inputs['studentlevel'] == 'Basic Education'){
 
-					//return basiced email
-					return $this->inquiry_choices['Admission_BED'];
-					
+				//return basiced email
+				return $this->inquiry_choices['Admission_BED'];
 
-				}
-				else if($inputs['studentlevel'] == 'Senior Highschool'){
+			}
+			else if($inputs['studentlevel'] == 'Senior Highschool'){
 
-					//return shs email
-					return $this->inquiry_choices['Admission_SHS'];
-				}
-				else if($inputs['studentlevel'] == 'Higher Education'){
+				//return shs email
+				return $this->inquiry_choices['Admission_SHS'];
+			}
+			else if($inputs['studentlevel'] == 'Higher Education'){
 
-					//return hed email
-					return $this->inquiry_choices['Admission'];
-
-				}else{
-
-					//return admissions email
-					return $this->inquiry_choices['Admission'];
-
-				}
-
-			}else{
-
-				//return admissions email
+				//return hed email
 				return $this->inquiry_choices['Admission'];
 
 			}
+
 		}
 		else if($inputs['concern'] == 'Grades'){
 
+			if($inputs['studentlevel'] == 'Basic Education'){
 
-			if($inputs['studentoption'] == 1){
-				
-				if($inputs['studentlevel'] == 'Basic Education'){
+				//return basiced email
+				return $this->inquiry_choices['Grade_BED'];
 
-					//return basiced email
-					return $this->inquiry_choices['Grade_BED'];
+			}
+			else if($inputs['studentlevel'] == 'Senior Highschool'){
 
-				}
-				else if($inputs['studentlevel'] == 'Senior Highschool'){
+				//return shs email
+				return $this->inquiry_choices['Grade_SHS'];
+			}
+			else if($inputs['studentlevel'] == 'Higher Education'){
 
-					//return shs email
-					return $this->inquiry_choices['Grade_SHS'];
-				}
-				else if($inputs['studentlevel'] == 'Higher Education'){
-
-					//return hed email
-					return $this->inquiry_choices['Grade_Registrar'];
-
-				}else{
-
-					//return admissions email
-					return $this->inquiry_choices['Grade_Registrar'];
-
-				}
-
-			}else{
-
-				//return registrar email
+				//return hed email
 				return $this->inquiry_choices['Grade_Registrar'];
+
 			}
 
-		}else{
+		}
+		else if($inputs['concern'] == 'Others'){
+
+
+			if($inputs['studentlevel'] == 'Basic Education'){
+
+				//return basiced email
+				return $this->inquiry_choices['Other_BED'];
+
+			}
+			else if($inputs['studentlevel'] == 'Senior Highschool'){
+
+				//return shs email
+				return $this->inquiry_choices['Grade_SHS'];
+			}
+			else if($inputs['studentlevel'] == 'Higher Education'){
+
+				//return hed email
+				return $this->inquiry_choices['Other_SHS'];
+
+			}
+
+		}
+		else{
 
 			//return default
 			return $this->inquiry_choices[$inputs['concern']];
