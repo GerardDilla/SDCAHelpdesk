@@ -1,7 +1,13 @@
 	<!--   Core JS Files   -->
-	<script src="<?php echo base_url(); ?>assets/js/jquery-2.2.4.min.js" type="text/javascript"></script>
+	<script src="<?php echo base_url(); ?>assets/js/jquery-3.1.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo base_url(); ?>assets/js/bootstrap.min.js" type="text/javascript"></script>
 	<script src="<?php echo base_url(); ?>assets/js/jquery.bootstrap.wizard.js" type="text/javascript"></script>
+
+	<script>
+		function baseurl(){
+			return '<?php echo base_url(); ?>';
+		}
+	</script>
 
 	<!--  Plugin for the Wizard -->
 	<script src="<?php echo base_url(); ?>assets/js/demo.js" type="text/javascript"></script>

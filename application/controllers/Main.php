@@ -3,8 +3,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Main extends MY_Controller {
 
-    public function __construct() 
+    function __construct() 
     {
+
+		header('Access-Control-Allow-Origin: *');
+		header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE, OPTIONS');
+		header('Access-Control-Request-Headers: Content-Type');
+
 		parent::__construct();
 		$this->inquiry_choices = array(
 
@@ -28,15 +33,17 @@ class Main extends MY_Controller {
 			'Documents' => 'registrar@sdca.edu.ph',
 		);
 		$this->load->library('email');
+		$this->load->model('Programs');
 		$this->inputs = array();
 		$this->message = array(
 			'primary' => '',
 			'secondary' => '',
 		);
 	}
-	public function index()
-	{
+	public function index(){
+
 		$this->render('Form');
+
 	}
 	public function Done(){
 
@@ -238,4 +245,32 @@ class Main extends MY_Controller {
 		
 
 	}
+	public function getDepartments(){
+		
+		$result = $this->Programs->DepartmentList();
+		echo json_encode($result);
+	}
+	public function getPrograms(){
+		
+		$School_ID = $this->input->post('school_id');
+		$result = $this->Programs->ProgramList($School_ID);
+		echo json_encode($result);
+	}
+	public function getConcerns(){
+
+		$returndata = array();
+		$result = $this->Programs->getConcerns();
+		foreach($result as $data){
+			$returndata[$data['Topic']] = array(
+				'Name' => $data['Topic'],
+				'Icon' => $data['Icon'],
+			);
+		}
+		echo json_encode($returndata);
+
+	}
+	public function getLevel(){
+
+	}
+
 }
