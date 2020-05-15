@@ -62,8 +62,12 @@ class Main extends MY_Controller {
 			$this->form_validation->set_rules('studentlevel', 'Student Level', 'required');
 			$this->form_validation->set_rules('studentnumber', 'Student Number', 'required');
 			$studentlevel = $this->input->post('studentlevel');
-			if($studentlevel == 'Senior Highschool'){
+			if($studentlevel == 2){
 				$this->form_validation->set_rules('studentstrand', 'Student Strand', 'required');
+			}
+			if($studentlevel == 1){
+				$this->form_validation->set_rules('studentdepartment', 'Student Department', 'required');
+				$this->form_validation->set_rules('studentprogram', 'Student Program', 'required');
 			}
 		}
 
@@ -79,31 +83,26 @@ class Main extends MY_Controller {
 			$this->inputs['studentoption'] = $this->input->post('studentoption');
 			$this->inputs['studentlevel'] = $this->input->post('studentlevel');
 			$this->inputs['studentnumber'] = $this->inputs['studentoption'] == 1 ? $this->input->post('studentnumber') : 'N/A';
-			$this->inputs['studentstrand'] = $this->inputs['studentlevel'] == 'Senior Highschool' ? $this->input->post('studentstrand') : '';
+			$this->inputs['studentstrand'] = $this->inputs['studentlevel'] == 2 ? $this->input->post('studentstrand') : 0;
+			$this->inputs['studentprogram'] = $this->inputs['studentlevel'] == 1 ? $this->input->post('studentprogram') : 0;
+			$this->inputs['studentdepartment'] = $this->inputs['studentoption'] == 1 && $this->inputs['studentlevel'] == 1 ? $this->input->post('studentdepartment') : 0;
 			$this->inputs['subject'] = $this->input->post('subject');
 			$this->inputs['inquiry'] = $this->input->post('inquiry');
 			$this->inputs['concern'] = $this->input->post('concern')[0];
-			$this->inputs['concernEmail'] = $this->filterEmailConcerned($this->inputs);
-			if(is_array($this->inputs['concernEmail'])){
-				$this->inputs['concernEmail_cc'] = $this->inputs['concernEmail']['cc'];
-				$this->inputs['concernEmail'] = $this->inputs['concernEmail']['main'];
-			}else{
-				$this->inputs['concernEmail_cc'] = '';
-				$this->inputs['concernEmail'] = $this->inputs['concernEmail'];
-			}
-			//echo json_encode($this->inputs);
+			$emails = $this->filterEmailConcerned($this->inputs);
+			$this->inputs['concernEmail'] = $emails['Main'];
+			$this->inputs['concernEmail_cc'] = $emails['CC'];
+
 			//Save to database 
 
 			//Email to concerned
 			//Enable mailing when implementing
-			$mailStatus = 1;//$this->SendinquirynMail($this->inputs);
+			$mailStatus = $this->SendinquirynMail($this->inputs);
 
 			if($mailStatus == 1){
 
 				//Remvoe debug message when implementing
-				$this->message['primary'] = 'THANK YOU FOR SUBMITTING YOUR INQUIRY
-				<hr style="color:#cc0000"><span>DEBUG (Shows where the email was sent for testing purposes, will remove when implemented): <br>
-				<br>email: '.$this->inputs['concernEmail'].' <br>cc: '.$this->inputs['concernEmail_cc'].'</span>';
+				$this->message['primary'] = 'THANK YOU FOR SUBMITTING YOUR INQUIRY';
 				$this->message['secondary'] = 'We\'re glad to hear form you! We\'ll reply through the email address you sent us';
 				$this->session->set_flashdata('Message',$this->message);
 
@@ -125,74 +124,34 @@ class Main extends MY_Controller {
 	}
 	private function filterEmailConcerned($inputs = array()){
 
-		if($inputs['concern'] == 'Admission'){
-			if($inputs['studentlevel'] == 'Basic Education'){
 
-				//return basiced email
-				return $this->inquiry_choices['Admission_BED'];
+		$returndata = array(
+			'Main' => '',
+			'CC' => '',
+		);
 
-			}
-			else if($inputs['studentlevel'] == 'Senior Highschool'){
-
-				//return shs email
-				return $this->inquiry_choices['Admission_SHS'];
-			}
-			else if($inputs['studentlevel'] == 'Higher Education'){
-
-				//return hed email
-				return $this->inquiry_choices['Admission'];
-
-			}
-
+		if($inputs['concern'] != 5){
+			$inputs['studentprogram'] = 0;
 		}
-		else if($inputs['concern'] == 'Grades'){
-
-			if($inputs['studentlevel'] == 'Basic Education'){
-
-				//return basiced email
-				return $this->inquiry_choices['Grade_BED'];
-
-			}
-			else if($inputs['studentlevel'] == 'Senior Highschool'){
-
-				//return shs email
-				return $this->inquiry_choices['Grade_SHS'];
-			}
-			else if($inputs['studentlevel'] == 'Higher Education'){
-
-				//return hed email
-				return $this->inquiry_choices['Grade_Registrar'];
-
-			}
-
+		if($inputs['concern'] == 2){
+			$inputs['studentlevel'] = 0;
 		}
-		else if($inputs['concern'] == 'Others'){
-
-
-			if($inputs['studentlevel'] == 'Basic Education'){
-
-				//return basiced email
-				return $this->inquiry_choices['Other_BED'];
-
-			}
-			else if($inputs['studentlevel'] == 'Senior Highschool'){
-
-				//return shs email
-				return $this->inquiry_choices['Grade_SHS'];
-			}
-			else if($inputs['studentlevel'] == 'Higher Education'){
-
-				//return hed email
-				return $this->inquiry_choices['Other_SHS'];
-
-			}
-
+		if($inputs['concern'] == 4){
+			$inputs['studentlevel'] = 0;
 		}
-		else{
-
-			//return default
-			return $this->inquiry_choices[$inputs['concern']];
+		if($inputs['concern'] == 6){
+			$inputs['studentlevel'] = 0;
 		}
+
+		$main_email = $this->Programs->getEmailMain($inputs);
+		$cc_email = $this->Programs->getEmailCC($inputs);
+		if($main_email){
+			$returndata['Main'] = $main_email[0]['Email'];
+		}
+		if($cc_email){
+			$returndata['CC'] = $cc_email[0]['Email'];
+		}
+		return $returndata;
 	}
 	private function SendinquirynMail($inputs){
 
@@ -219,10 +178,18 @@ class Main extends MY_Controller {
 		$this->email->set_newline("\r\n");
 		
 		$this->email->from('webmailer@sdca.edu.ph', 'St. Dominic College of Asia');
+		/*
 		$this->email->to($inputs['concernEmail']); 
+		if($inputs['concernEmail_cc'] != ''){
+			$this->email->cc($inputs['concernEmail_cc']);
+		}*/
+		/* below are the test emails For testing*/
+		$this->email->to('gpdilla@sdca.edu.ph'); 
+		if($inputs['concernEmail_cc'] != ''){
+			$this->email->cc('gerarddilla@gmail.com');
+		}
 		$this->email->subject($inputs['subject']);
-		$this->email->message('
-
+		$this->email->message('<br>
 			<b>Inquirer\'s Name:</b> '.$inputs['name'].'<br>
 			<b>Inquirer\'s Email:</b> '.$inputs['email'].'<br>
 			<hr>
@@ -230,10 +197,9 @@ class Main extends MY_Controller {
 			<b>Student Education Level:</b> '.$inputs['studentlevel'].'<br>
 			'.$studentStrand.'
 			<hr>
-			<b>Inquiry:</b>'.$inputs['inquiry'].'<br>
+			<b>Inquiry:</b><br>'.$inputs['inquiry'].'<br>
 			<hr>
 			<i>Dont reply on this email, thank you.</i>
-			
 		');
 		if(!$this->email->send())
 		{
@@ -262,6 +228,7 @@ class Main extends MY_Controller {
 		$result = $this->Programs->getConcerns();
 		foreach($result as $data){
 			$returndata[$data['Topic']] = array(
+				'ID' => $data['ID'],
 				'Name' => $data['Topic'],
 				'Icon' => $data['Icon'],
 			);

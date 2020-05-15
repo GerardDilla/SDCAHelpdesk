@@ -44,6 +44,7 @@ $(document).ready(function(){
 
     //Recaptcha verify
     $('.formsubmit').click(function(e){
+
         captchaResponse = grecaptcha.getResponse();
         if(captchaResponse.length){
             $('.captchaMessage').html('');
@@ -82,15 +83,15 @@ $(document).ready(function(){
         if($("input[name='studentoption']:checked").val() == 1){
             enrolled = 1;
         }
-        if($(this).val() == 'Basic Education'){
+        if($(this).val() == 3){
             filterConcernChoices('bed',enrolled);
             toggle_StrandSelect(0);
         }
-        else if($(this).val() == 'Senior Highschool'){
+        else if($(this).val() == 2){
             filterConcernChoices('shs',enrolled);
             toggle_StrandSelect(1);
         }
-        else if($(this).val() == 'Higher Education'){
+        else if($(this).val() == 1){
             filterConcernChoices('hed',enrolled)
             toggle_StrandSelect(2);
         }
@@ -101,7 +102,7 @@ $(document).ready(function(){
 
     });
 
-    $('.strandSelect').on('change','#studentdept_select',function(){
+    $('.additionnal_basicinfo').on('change','#studentdept_select',function(){
         
         getPrograms($(this).val());
 
@@ -185,16 +186,21 @@ $(document).ready(function(){
         });
 
         $('#choiceparent').on('click','[data-toggle="wizard-checkbox"]',function(){
+
+            /* //Uncomment to make it togglable PS: buggy
             if( $(this).hasClass('active')){
                 $(this).removeClass('active');
                 $(this).find('[type="checkbox"]').removeAttr('checked');
             } else {
-                $('.choice').removeClass('active');
-                $('.choice').find('[type="checkbox"]').prop('checked', false);
-                $(this).addClass('active');
-                $(this).find('[type="checkbox"]').prop('checked', true);
-                subjectPreset($(this).find('[type="checkbox"]').val());
+
             }
+            */
+
+            $('.choice').removeClass('active');
+            $('.choice').find('[type="checkbox"]').prop('checked', false);
+            $(this).addClass('active');
+            $(this).find('[type="checkbox"]').prop('checked', true);
+            subjectPreset($(this).find('[type="checkbox"]').data('name'));
         });
 
         $('.set-full-height').css('height', 'auto');
@@ -234,9 +240,9 @@ function toggle_AdditionalFormInfo(toggle = 0){
             <label for="studentlevel_select">Education level</label>\
             <select class="form-control" name="studentlevel" id="studentlevel_select">\
                 <option selected="selected" disabled>Select Student Education Level</option>\
-                <option>Basic Education</option>\
-                <option>Senior Highschool</option>\
-                <option>Higher Education</option>\
+                <option value="3">Basic Education</option>\
+                <option value="2">Senior Highschool</option>\
+                <option value="1">Higher Education</option>\
             </select>\
             <div class="strandSelect"></div>\
             </div>\
@@ -252,9 +258,9 @@ function toggle_AdditionalFormInfo(toggle = 0){
             <label for="studentlevel_select">Select the student\'s education level</label>\
             <select class="form-control" name="studentlevel" id="studentlevel_select">\
                 <option selected="selected" disabled>Select Student Education Level</option>\
-                <option>Basic Education</option>\
-                <option>Senior Highschool</option>\
-                <option>Higher Education</option>\
+                <option value="3">Basic Education</option>\
+                <option value="2">Senior Highschool</option>\
+                <option value="1">Higher Education</option>\
             </select>\
             <div class="strandSelect"></div>\
             </div>\
@@ -297,7 +303,7 @@ function filterConcernChoices(choice = 'none', enrolled = 1){
             choices = {
                 'bed':['Admission','Finance','Grades','Documents','Library','Others'],
                 'shs':['Admission','Finance','Grades','Documents','Library','Others'],
-                'hed':['Admission','Finance','Grades','Documents','Library'],
+                'hed':['Admission','Finance','Grades','Documents','Library','Others'],
                 'none':['Admission'],
             };
         }else{
@@ -315,7 +321,7 @@ function filterConcernChoices(choice = 'none', enrolled = 1){
             $('#choiceparent').append('\
                 <div class="col-sm-4 d-flex justify-content-center">\
                     <div class="choice" data-toggle="wizard-checkbox">\
-                        <input type="checkbox" class="choice" name="concern[]" value="'+outputs[value]['Name']+'">\
+                        <input type="checkbox" class="choice" name="concern[]" value="'+outputs[value]['ID']+'" data-name="'+outputs[value]['Name']+'">\
                         <div class="card card-checkboxes card-hover-effect">\
                             <i class="'+outputs[value]['Icon']+'"></i>\
                             <p>'+outputs[value]['Name']+'</p>\
@@ -356,11 +362,10 @@ function getPrograms(school_id = 0){
             });
             $('.strandSelect .programselect').html('\
                 <label for="studentprogram_select">Select Program</label>\
-                <select class="form-control" name="studenrprogram" id="studentprogram_select">\
+                <select class="form-control" name="studentprogram" id="studentprogram_select">\
                     <option selected="selected" disabled>Select Department</option>\
                     '+options+'\
                 </select>\
-                <div class="programselect"></div>\
             ');
             console.log(data);
         },
