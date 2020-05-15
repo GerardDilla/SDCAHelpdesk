@@ -193,16 +193,18 @@ class Main extends MY_Controller {
 		$this->email->set_newline("\r\n");
 		
 		$this->email->from('webmailer@sdca.edu.ph', 'St. Dominic College of Asia');
-		/*
+	
 		$this->email->to($inputs['concernEmail']); 
 		if($inputs['concernEmail_cc'] != ''){
 			$this->email->cc($inputs['concernEmail_cc']);
-		}*/
+		}
 		/* below are the test emails For testing*/
+		/*
 		$this->email->to('gpdilla@sdca.edu.ph'); 
 		if($inputs['concernEmail_cc'] != ''){
 			$this->email->cc('gerarddilla@gmail.com');
 		}
+		*/
 		$this->email->subject($inputs['subject']);
 		$this->email->message('<br>
 			<b>Inquirer\'s Name:</b> '.$inputs['name'].'<br>
