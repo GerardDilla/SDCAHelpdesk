@@ -39,6 +39,8 @@ class Main extends MY_Controller {
 			'primary' => '',
 			'secondary' => '',
 		);
+		date_default_timezone_set('Asia/Manila');
+		//echo date("Y-m-d H:i:s");
 	}
 	public function index(){
 
@@ -82,6 +84,7 @@ class Main extends MY_Controller {
 			$this->inputs['email'] = $this->input->post('email');
 			$this->inputs['studentoption'] = $this->input->post('studentoption');
 			$this->inputs['studentlevel'] = $this->input->post('studentlevel');
+			$this->inputs['studenteducation'] = $this->getLevel($this->inputs['studentlevel']);
 			$this->inputs['studentnumber'] = $this->inputs['studentoption'] == 1 ? $this->input->post('studentnumber') : 'N/A';
 			$this->inputs['studentstrand'] = $this->inputs['studentlevel'] == 2 ? $this->input->post('studentstrand') : 0;
 			$this->inputs['studentprogram'] = $this->inputs['studentlevel'] == 1 ? $this->input->post('studentprogram') : 0;
@@ -94,12 +97,20 @@ class Main extends MY_Controller {
 			$this->inputs['concernEmail_cc'] = $emails['CC'];
 
 			//Save to database 
+			$this->inputs['inquiryID'] = $this->SaveInquiry($this->inputs);
+			if(!$this->inputs['inquiryID']){
+
+				$this->message['secondary'] = 'Failed to send inquiry, please try again';
+				$this->session->set_flashdata('Message',$this->message);
+				redirect('Main/Done');
+
+			}
 
 			//Email to concerned
 			//Enable mailing when implementing
-			$mailStatus = $this->SendinquirynMail($this->inputs);
+			$this->inputs['mailStatus'] = $this->SendinquirynMail($this->inputs);
 
-			if($mailStatus == 1){
+			if($this->inputs['mailStatus'] == 1){
 
 				//Remvoe debug message when implementing
 				$this->message['primary'] = 'THANK YOU FOR SUBMITTING YOUR INQUIRY';
@@ -111,6 +122,10 @@ class Main extends MY_Controller {
 				$this->message['secondary'] = 'Failed to send inquiry, please try again';
 				$this->session->set_flashdata('Message',$this->message);
 			}
+
+			//Update Status of inquiry
+			$this->UpdateInquiry($this->inputs);
+			
 			//echo json_encode($this->inputs);
 			redirect('Main/Done');
 
@@ -194,7 +209,7 @@ class Main extends MY_Controller {
 			<b>Inquirer\'s Email:</b> '.$inputs['email'].'<br>
 			<hr>
 			<b>Student Number:</b> '.$inputs['studentnumber'].'<br>
-			<b>Student Education Level:</b> '.$inputs['studentlevel'].'<br>
+			<b>Student Education Level:</b> '.$inputs['studenteducation'].'<br>
 			'.$studentStrand.'
 			<hr>
 			<b>Inquiry:</b><br>'.$inputs['inquiry'].'<br>
@@ -236,7 +251,54 @@ class Main extends MY_Controller {
 		echo json_encode($returndata);
 
 	}
-	public function getLevel(){
+	public function getLevel($id = 0){
+
+		$result = $this->Programs->getEducationLevel($id);
+		if($result){
+			return $result[0]['TopicCategory'];
+		}else{
+			return 'N/A';
+		}
+
+	}
+	private function SaveInquiry($inputs){
+
+		$insert = array(
+			'InquirerName' => $inputs['name'],
+			'InquirerEmail' => $inputs['email'],
+			'StudentNumber' => $inputs['studentnumber'],
+			'StudentLevel' => $inputs['studentlevel'],
+			'StudentDepartment' => $inputs['studentdepartment'],
+			'StudentStrand' => $inputs['studentstrand'],
+			'StudentProgram' => $inputs['studentprogram'],
+			'InquirySubject' => $inputs['concern'],
+			'Inquiry' => $inputs['inquiry'],
+			'DateSubmitted' => date("Y-m-d H:i:s"),
+		);
+
+		return $this->Programs->InsertInquiry($insert);
+
+	}
+	private function UpdateInquiry($inputs){
+
+		$update = array();
+
+		if($inputs['mailStatus'] == 1){
+
+			$update['Status'] = 'Successfully Sent to: '.$inputs['concernEmail'];
+			if($inputs['concernEmail_cc'] != ''){
+				$update['Status'] .= ' with '.$inputs['concernEmail_cc'].' as CC';
+			}
+
+		}else{
+
+			$update['Status'] = 'Failed Sending to: '.$inputs['concernEmail'];
+			if($inputs['concernEmail_cc'] != ''){
+				$update['Status'] .= ' with '.$inputs['concernEmail_cc'].' as CC';
+			}
+		}
+
+		return $this->Programs->UpdateInquiry($inputs['inquiryID'],$update);
 
 	}
 

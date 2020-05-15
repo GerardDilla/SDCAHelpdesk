@@ -51,6 +51,25 @@ class Programs extends CI_Model{
 		return $result->result_array();
 
 	}
+	public function getEducationLevel($id){
+
+		$this->db->where('ID',$id);
+		$result = $this->db->get('helpdesktopiccategory');
+		return $result->result_array();
+
+	}
+	public function InsertInquiry($inputs){
+
+		$this->db->insert('helpdeskinquiries',$inputs);
+		return $this->db->insert_id();
+
+	}
+	public function UpdateInquiry($id,$inputs){
+
+		$this->db->where('InquiryID',$id);
+		$this->db->update('helpdeskinquiries',$inputs);
+
+	}
 
 	
 

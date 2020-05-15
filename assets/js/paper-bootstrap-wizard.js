@@ -447,7 +447,8 @@ function validationRules(){
                 required: true
             },
             inquiry: {
-                required: true
+                required: true,
+                maxlength: 200
             },
         },
         messages: {
