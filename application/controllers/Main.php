@@ -193,7 +193,7 @@ class Main extends MY_Controller {
 		$this->email->set_newline("\r\n");
 		
 		$this->email->from('webmailer@sdca.edu.ph', 'St. Dominic College of Asia');
-	
+		
 		$this->email->to($inputs['concernEmail']); 
 		if($inputs['concernEmail_cc'] != ''){
 			$this->email->cc($inputs['concernEmail_cc']);
@@ -210,7 +210,7 @@ class Main extends MY_Controller {
 			<b>Inquirer\'s Name:</b> '.$inputs['name'].'<br>
 			<b>Inquirer\'s Email:</b> '.$inputs['email'].'<br>
 			<hr>
-			<b>Student Number:</b> '.$inputs['studentnumber'].'<br>
+			<b>Student Number / Reference Number:</b> '.$inputs['studentnumber'].'<br>
 			<b>Student Education Level:</b> '.$inputs['studenteducation'].'<br>
 			'.$studentStrand.'
 			<hr>

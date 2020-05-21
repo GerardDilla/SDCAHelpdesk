@@ -49,6 +49,7 @@ $(document).ready(function(){
         if(captchaResponse.length){
             $('.captchaMessage').html('');
             $('#inquiryform').submit();
+            $('.formsubmit').prop('disabled', true);
         }else{
             $('.captchaMessage').html('Please verify reCAPTCHA below');
         }
@@ -247,7 +248,7 @@ function toggle_AdditionalFormInfo(toggle = 0){
             <div class="strandSelect"></div>\
             </div>\
             <div class="form-group">\
-                <label>Student Number <small>(required)</small></label>\
+                <label>Student Number / Reference Number <small>(required)</small></label>\
                 <input name="studentnumber" type="number" class="form-control">\
             </div>\
         ');
