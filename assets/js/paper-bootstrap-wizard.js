@@ -429,6 +429,9 @@ function validationRules(){
             email: {
                 required: true
             },
+            contactnumber: {
+                required: true
+            },
             studentlevel: {
                 required: true
             },

@@ -56,6 +56,7 @@ class Main extends MY_Controller {
 
 		$this->form_validation->set_rules('fullname', 'Name', 'required');
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+		$this->form_validation->set_rules('contactnumber', 'Contact Number', 'required');
 		$this->form_validation->set_rules('studentoption', 'Student Education Level', 'required',
 			array('required' => 'You must choose whether the concern is about an enrolled student')
 		);
@@ -82,6 +83,7 @@ class Main extends MY_Controller {
 			//Compile inputs
 			$this->inputs['name'] = $this->input->post('fullname');
 			$this->inputs['email'] = $this->input->post('email');
+			$this->inputs['contactnumber'] = $this->input->post('contactnumber');
 			$this->inputs['studentoption'] = $this->input->post('studentoption');
 			$this->inputs['studentlevel'] = $this->input->post('studentlevel');
 			$this->inputs['studenteducation'] = $this->getLevel($this->inputs['studentlevel']);
@@ -194,10 +196,12 @@ class Main extends MY_Controller {
 		
 		$this->email->from('webmailer@sdca.edu.ph', 'St. Dominic College of Asia');
 		
+		
 		$this->email->to($inputs['concernEmail']); 
 		if($inputs['concernEmail_cc'] != ''){
 			$this->email->cc($inputs['concernEmail_cc']);
 		}
+		
 		/* below are the test emails For testing*/
 		/*
 		$this->email->to('gpdilla@sdca.edu.ph'); 
@@ -205,10 +209,12 @@ class Main extends MY_Controller {
 			$this->email->cc('gerarddilla@gmail.com');
 		}
 		*/
+		
 		$this->email->subject($inputs['subject']);
 		$this->email->message('<br>
 			<b>Inquirer\'s Name:</b> '.$inputs['name'].'<br>
 			<b>Inquirer\'s Email:</b> '.$inputs['email'].'<br>
+			<b>Inquirer\'s Contact Number:</b> '.$inputs['contactnumber'].'<br>
 			<hr>
 			<b>Student Number / Reference Number:</b> '.$inputs['studentnumber'].'<br>
 			<b>Student Education Level:</b> '.$inputs['studenteducation'].'<br>
@@ -268,6 +274,7 @@ class Main extends MY_Controller {
 		$insert = array(
 			'InquirerName' => $inputs['name'],
 			'InquirerEmail' => $inputs['email'],
+			'ContactNumber' => $inputs['contactnumber'],
 			'StudentNumber' => $inputs['studentnumber'],
 			'StudentLevel' => $inputs['studentlevel'],
 			'StudentDepartment' => $inputs['studentdepartment'],

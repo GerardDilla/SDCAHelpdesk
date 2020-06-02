@@ -59,6 +59,10 @@
 											<label>Email <small>(required)</small></label>
 											<input name="email" type="email" class="form-control" placeholder="JuanCruz@email.com">
 										</div>
+										<div class="form-group">
+											<label>Contact Number <small>(required)</small></label>
+											<input name="contactnumber" type="number" class="form-control">
+										</div>
 										<label>Is the inquiry about your enrolled child? <small>(required)</small></label>
 										<div class="radio">
 											<label>
@@ -174,4 +178,5 @@
 	</div><!-- end row -->
 </div> 
 <!--  big container -->
+
 
