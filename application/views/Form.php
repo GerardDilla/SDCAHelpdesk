@@ -1,3 +1,13 @@
+<div style="background-image: url('<?php echo base_url(); ?>assets/img/background.jpg');
+height: 100%;
+background-attachment: fixed;
+background-repeat: no-repeat;
+background-position: center;
+background-size: cover;
+position: fixed;
+width: 100%;
+">
+</div>
 
 <!--   Big container   -->
 <div class="container">
@@ -7,13 +17,23 @@
 			<!--      Wizard container        -->
 			<div class="wizard-container">
 
-				<div class="card wizard-card" data-color="orange" id="wizardProfile">
+				<div class="card wizard-card" style="background:#800000; color:white" data-color="orange" id="wizardProfile">
+
+					<div class="helplogo">
+						<img src="<?php echo base_url(); ?>assets/img/Logo.jpg">
+					</div>
+
 					<form action="<?php echo base_url(); ?>index.php/Main/Inquire" method="POST" id="inquiryform">
 						<!--You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure"-->
 
-						<div class="wizard-header text-center">
-							<h1 class="wizard-title">SUBMIT YOUR INQUIRY</h1>
-							<p class="category">Fill out the following fields, submit, and wait for a reply to your email</p>
+						<div class="wizard-header">
+
+							<h3 class="wizard-title">WE'RE GLAD TO ASSIST YOU!</h3><br>
+							<h5 class="wizard-title">
+							Please complete the information on the following field and let us know <br> how we may help you. 
+							We'll do our best to be as responsive as possible</h5>
+							<br>
+
 						</div>
 						<div class="wizard-navigation">
 							<div class="progress-with-circle">

@@ -72,10 +72,13 @@ class Programs extends CI_Model{
 
 	}
 	public function UpdateInquiry($id,$inputs){
-$this->db->trans_start();
+
+		$this->db->trans_start();
 		$this->db->where('InquiryID',$id);
 		$this->db->update('helpdeskinquiries',$inputs);
-
+		$this->db->trans_complete();
+		return $this->db->trans_status();
+		
 	}
 
 	
