@@ -203,12 +203,11 @@ class Main extends MY_Controller {
 		
 		$this->email->from('webmailer@sdca.edu.ph', 'St. Dominic College of Asia');
 		
-		/*
 		$this->email->to($inputs['concernEmail']); 
 		if($inputs['concernEmail_cc'] != ''){
 			$this->email->cc($inputs['concernEmail_cc']);
 		}
-		*/
+		
 		
 		/* below are the test emails For testing*/
 		/*
