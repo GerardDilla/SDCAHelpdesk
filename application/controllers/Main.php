@@ -34,6 +34,7 @@ class Main extends MY_Controller {
 		);
 		$this->load->library('email');
 		$this->load->model('Programs');
+		$this->load->model('TrackingCode');
 		$this->inputs = array();
 		$this->message = array(
 			'primary' => '',
@@ -90,6 +91,7 @@ class Main extends MY_Controller {
 			$this->inputs['studentnumber'] = $this->inputs['studentoption'] == 1 ? $this->input->post('studentnumber') : 'N/A';
 			$this->inputs['studentstrand'] = $this->inputs['studentlevel'] == 2 ? $this->input->post('studentstrand') : 0;
 			$this->inputs['studentprogram'] = $this->inputs['studentlevel'] == 1 ? $this->input->post('studentprogram') : 0;
+			$this->inputs['studentprogram_name'] = $this->getProgram($this->inputs['studentprogram']);
 			$this->inputs['studentdepartment'] = $this->inputs['studentoption'] == 1 && $this->inputs['studentlevel'] == 1 ? $this->input->post('studentdepartment') : 0;
 			$this->inputs['subject'] = $this->input->post('subject');
 			$this->inputs['inquiry'] = $this->input->post('inquiry');
@@ -97,12 +99,15 @@ class Main extends MY_Controller {
 			$emails = $this->filterEmailConcerned($this->inputs);
 			$this->inputs['concernEmail'] = $emails['Main'];
 			$this->inputs['concernEmail_cc'] = $emails['CC'];
-
+			$this->inputs['TrackingCode'] = $this->TrackingCode();
+			$this->inputs['ResolveLink'] = base_url().'index.php/Main/Resolve/'.$this->inputs['TrackingCode'];
+			
 			//Save to database 
 			$this->inputs['inquiryID'] = $this->SaveInquiry($this->inputs);
 			if(!$this->inputs['inquiryID']){
 
 				$this->message['secondary'] = 'Failed to send inquiry, please try again';
+				$this->message['toggle'] = 'form';
 				$this->session->set_flashdata('Message',$this->message);
 				redirect('Main/Done');
 
@@ -117,11 +122,13 @@ class Main extends MY_Controller {
 				//Remvoe debug message when implementing
 				$this->message['primary'] = 'THANK YOU FOR SUBMITTING YOUR INQUIRY';
 				$this->message['secondary'] = 'We\'re glad to hear form you! We\'ll reply through the email address you sent us';
+				$this->message['toggle'] = 'form';
 				$this->session->set_flashdata('Message',$this->message);
 
 			}else{
 				
 				$this->message['secondary'] = 'Failed to send inquiry, please try again';
+				$this->message['toggle'] = 'form';
 				$this->session->set_flashdata('Message',$this->message);
 			}
 
@@ -133,6 +140,7 @@ class Main extends MY_Controller {
 
 		}else{
 			$this->message['secondary'] = validation_errors();
+			$this->message['toggle'] = 'form';
 			$this->session->set_flashdata('Message',$this->message);
 			redirect('Main/Done');
 		}
@@ -146,7 +154,6 @@ class Main extends MY_Controller {
 			'Main' => '',
 			'CC' => '',
 		);
-
 		if($inputs['concern'] != 5){
 			$inputs['studentprogram'] = 0;
 		}
@@ -196,25 +203,29 @@ class Main extends MY_Controller {
 		
 		$this->email->from('webmailer@sdca.edu.ph', 'St. Dominic College of Asia');
 		
-		
+		/*
 		$this->email->to($inputs['concernEmail']); 
 		if($inputs['concernEmail_cc'] != ''){
 			$this->email->cc($inputs['concernEmail_cc']);
 		}
+		*/
 		
 		/* below are the test emails For testing*/
 		/*
-		$this->email->to('gpdilla@sdca.edu.ph'); 
+		//$this->email->to('jcjamir@sdca.edu.ph');
+		//$this->email->to('gpdilla@sdca.edu.ph');
 		if($inputs['concernEmail_cc'] != ''){
 			$this->email->cc('gerarddilla@gmail.com');
 		}
 		*/
 		
 		$this->email->subject($inputs['subject']);
+		/*
 		$this->email->message('<br>
 			<b>Inquirer\'s Name:</b> '.$inputs['name'].'<br>
 			<b>Inquirer\'s Email:</b> '.$inputs['email'].'<br>
 			<b>Inquirer\'s Contact Number:</b> '.$inputs['contactnumber'].'<br>
+			<b>Tracking Code:</b> '.$inputs['TrackingCode'].'<br>
 			<hr>
 			<b>Student Number / Reference Number:</b> '.$inputs['studentnumber'].'<br>
 			<b>Student Education Level:</b> '.$inputs['studenteducation'].'<br>
@@ -222,8 +233,12 @@ class Main extends MY_Controller {
 			<hr>
 			<b>Inquiry:</b><br>'.$inputs['inquiry'].'<br>
 			<hr>
+			<a target="_blank" href="'.base_url().'index.php/Main/Resolve/'.$inputs['TrackingCode'].'">Mark as Resolved</a>
 			<i>Dont reply on this email, thank you.</i>
 		');
+		*/
+		$this->email->message($this->load->view('EmailFormat',$inputs,true));
+		
 		if(!$this->email->send())
 		{
 			$mail_status == 0;
@@ -269,6 +284,16 @@ class Main extends MY_Controller {
 		}
 
 	}
+	private function getProgram($program = 0){
+
+		$result = $this->Programs->getProgramData($program);
+		if($result){
+			return $result[0]['Program_Name'];
+		}else{
+			return '';
+		}
+
+	}
 	private function SaveInquiry($inputs){
 
 		$insert = array(
@@ -283,10 +308,41 @@ class Main extends MY_Controller {
 			'InquirySubject' => $inputs['concern'],
 			'Inquiry' => $inputs['inquiry'],
 			'DateSubmitted' => date("Y-m-d H:i:s"),
+			'TrackingCode' => $inputs['TrackingCode'],
+			'Recipient' => $inputs['concernEmail'],
 		);
 
 		return $this->Programs->InsertInquiry($insert);
 
+	}
+	private function TrackingCode($limit = 15){
+
+		$draft = strtoupper(substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit));
+		$result = $this->TrackingCode->searchTrackingCode($draft);
+		if($result->num_rows() == 0){
+			//$draft = strtoupper(substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit));
+			return $draft;
+
+		}else{
+
+			$available = 0;
+			while($available == 0){
+
+				$draft = strtoupper(substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit));
+				$result = $this->TrackingCode->searchTrackingCode($draft);
+				if($result->num_rows() == 0){
+					//$draft = strtoupper(substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit));
+					return $draft;
+					$available = 1;
+
+				}
+
+			}
+
+		}
+
+		
+		
 	}
 	private function UpdateInquiry($inputs){
 
@@ -308,6 +364,44 @@ class Main extends MY_Controller {
 		}
 
 		return $this->Programs->UpdateInquiry($inputs['inquiryID'],$update);
+
+	}
+	public function Resolve($TrackerCode = ''){
+
+		$result = $this->TrackingCode->verifyTrackingCode($TrackerCode);
+		if($result > 0){
+
+			$this->message['primary'] = 'This inquiry has already been resolved.';
+			$this->message['secondary'] = '';
+			$this->message['toggle'] = 'close';
+			$this->session->set_flashdata('Message',$this->message);
+			$this->render('MessagePage');
+
+		}else{
+
+			$input = array(
+				'Resolved' => 1
+			);
+			$status = $this->TrackingCode->resolveInquiry($TrackerCode,$input);
+			if($status == TRUE){
+
+				$this->message['primary'] = 'Successfuly Resolved the inquiry, Thank you!';
+				$this->message['secondary'] = '';
+				$this->message['toggle'] = 'close';
+				$this->session->set_flashdata('Message',$this->message);
+				$this->render('MessagePage');
+
+			}else{
+
+				$this->message['primary'] = 'An Error occured while trying to resolve the inquiry, please try again';
+				$this->message['secondary'] = '';
+				$this->message['toggle'] = 'close';
+				$this->session->set_flashdata('Message',$this->message);
+				$this->render('MessagePage');
+
+			}
+
+		}
 
 	}
 

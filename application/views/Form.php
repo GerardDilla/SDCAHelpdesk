@@ -92,7 +92,7 @@
 										
 										<div class="col-sm-4">
 											<div class="choice" data-toggle="wizard-checkbox">
-												<input type="checkbox" class="choice" name="concern[]" value="Admission">
+												<input type="checkbox" class="choice" name="concern[]" value="1">
 												<div class="card card-checkboxes card-hover-effect">
 													<i class="ti-pencil-alt"></i>
 													<p>Admission</p>
@@ -101,7 +101,7 @@
 										</div>
 										<div class="col-sm-4">
 											<div class="choice" data-toggle="wizard-checkbox">
-												<input type="checkbox" class="choice" name="concern[]" value="Finance">
+												<input type="checkbox" class="choice" name="concern[]" value="2">
 												<div class="card card-checkboxes card-hover-effect">
 													<i class="ti-credit-card"></i>
 													<p>Finance</p>
@@ -110,7 +110,7 @@
 										</div>
 										<div class="col-sm-4">
 											<div class="choice" data-toggle="wizard-checkbox">
-												<input type="checkbox" class="choice" name="concern[]" value="Grades">
+												<input type="checkbox" class="choice" name="concern[]" value="3">
 												<div class="card card-checkboxes card-hover-effect">
 													<i class="ti-ruler-pencil"></i>
 													<p>Grades</p>
@@ -119,7 +119,7 @@
 										</div>
 										<div class="col-sm-4 col-sm-offset-2">
 											<div class="choice" data-toggle="wizard-checkbox">
-												<input type="checkbox" class="choice" name="concern[]" value="Others">
+												<input type="checkbox" class="choice" name="concern[]" value="5">
 												<div class="card card-checkboxes card-hover-effect">
 													<i class="ti-info-alt"></i>
 													<p>Others</p>
@@ -128,7 +128,7 @@
 										</div>
 										<div class="col-sm-4">
 											<div class="choice" data-toggle="wizard-checkbox">
-												<input type="checkbox" class="choice" name="concern[]" value="Documents">
+												<input type="checkbox" class="choice" name="concern[]" value="4">
 												<div class="card card-checkboxes card-hover-effect">
 													<i class="ti-folder"></i>
 													<p>Documents</p>

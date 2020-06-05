@@ -14,6 +14,13 @@ class Programs extends CI_Model{
 		return $result->result_array();
 	
 	}
+	public function getProgramData($ProgramID){
+
+		$this->db->where('Program_ID',$ProgramID);
+		$result = $this->db->get('Programs');
+		return $result->result_array();
+
+	}
 	public function DepartmentList(){
 
 		$this->db->where('School_ID <>',0);
@@ -65,7 +72,7 @@ class Programs extends CI_Model{
 
 	}
 	public function UpdateInquiry($id,$inputs){
-
+$this->db->trans_start();
 		$this->db->where('InquiryID',$id);
 		$this->db->update('helpdeskinquiries',$inputs);
 
