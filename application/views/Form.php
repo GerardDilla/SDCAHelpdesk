@@ -174,6 +174,12 @@ width: 100%;
 										</div>
 										<h5 class="captchaMessage"></h5>
 										<div class="g-recaptcha" data-sitekey="6LeWcSQUAAAAAN0dGTGNeBZkICUKTIrPUDfTA1Gt"></div>
+
+										<hr>
+										<label id="privacypolicy_message"></label><br>
+										<input type="checkbox" id="privacypolicy" name="privacypolicy" value="1">
+										<label for="basic_checkbox_1">I Agree to the <a target="_blank" href="https://www.stdominiccollege.edu.ph/index.php/data-privacy">Privacy Policy</a> of SDCA</label>
+										
 										<br/>
 									</div>
 

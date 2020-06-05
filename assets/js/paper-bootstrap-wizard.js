@@ -50,6 +50,7 @@ $(document).ready(function(){
             $('.captchaMessage').html('');
             $('#inquiryform').submit();
             $('.formsubmit').prop('disabled', true);
+            validationRules();
         }else{
             $('.captchaMessage').html('Please verify reCAPTCHA below');
         }
@@ -454,9 +455,13 @@ function validationRules(){
                 required: true,
                 maxlength: 200
             },
+            privacypolicy:{
+                required: true
+            }
         },
         messages: {
-            'concern[]': "Please Select an Inquiry Topic"
+            'concern[]': "Please Select an Inquiry Topic",
+            privacypolicy: "You need agree to the Privacy Policy before submitting the form",
         },
         errorPlacement: function(error, element) {
             if($(element).parent('div').parent('div').parent('div').attr('id') == 'choiceparent'){
@@ -464,9 +469,16 @@ function validationRules(){
                 parent = $('#choiceparent');
                 $('#choiceerror').html(error[0]['textContent']);
 
-            }else{
+            }
+            else if($(element).attr('id') == 'privacypolicy'){
+
+                $('#privacypolicy_message').html(error[0]['textContent']);
+
+            }
+            else{
                 error.insertAfter(element);
             }
+            $('.formsubmit').prop('disabled', false);
             //console.log($(element).parent('div').parent('div').parent('div').attr('id'));
         },
         success: function(){
