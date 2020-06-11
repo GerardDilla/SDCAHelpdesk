@@ -152,7 +152,7 @@ class Main extends MY_Controller {
 
 		$returndata = array(
 			'Main' => '',
-			'CC' => '',
+			'CC' => array(),
 		);
 		if($inputs['concern'] != 5){
 			$inputs['studentprogram'] = 0;
@@ -168,12 +168,17 @@ class Main extends MY_Controller {
 		}
 
 		$main_email = $this->Programs->getEmailMain($inputs);
-		$cc_email = $this->Programs->getEmailCC($inputs);
+		
 		if($main_email){
 			$returndata['Main'] = $main_email[0]['Email'];
-		}
-		if($cc_email){
-			$returndata['CC'] = $cc_email[0]['Email'];
+			$cc_email = $this->Programs->getEmailCC($main_email[0]);
+			if($cc_email){
+				foreach($cc_email as $index => $cc){	
+
+					$returndata['CC'][$index] = $cc['CC_Email'];
+
+				}
+			}
 		}
 		return $returndata;
 	}
@@ -201,22 +206,20 @@ class Main extends MY_Controller {
 
 		$this->email->set_newline("\r\n");
 		
-		$this->email->from('webmailer@sdca.edu.ph', 'St. Dominic College of Asia');
-		
+		$this->email->from($inputs['email'], 'St. Dominic College of Asia');
 		
 		$this->email->to($inputs['concernEmail']); 
-		if($inputs['concernEmail_cc'] != ''){
-			$this->email->cc($inputs['concernEmail_cc']);
-		}
+		$this->email->cc($inputs['concernEmail_cc']);
+		
 		
 		/* below are the test emails For testing*/
 		/*
 		//$this->email->to('jcjamir@sdca.edu.ph');
-		//$this->email->to('gpdilla@sdca.edu.ph');
-		if($inputs['concernEmail_cc'] != ''){
-			$this->email->cc('gerarddilla@gmail.com');
-		}
+		$this->email->to('gpdilla@sdca.edu.ph');
+		$this->email->cc($inputs['concernEmail_cc']);
+
 		*/
+		
 		
 		$this->email->subject($inputs['subject']);
 		/*
@@ -339,8 +342,6 @@ class Main extends MY_Controller {
 			}
 
 		}
-
-		
 		
 	}
 	private function UpdateInquiry($inputs){
@@ -350,16 +351,23 @@ class Main extends MY_Controller {
 		if($inputs['mailStatus'] == 1){
 
 			$update['Status'] = 'Successfully Sent to: '.$inputs['concernEmail'];
-			if($inputs['concernEmail_cc'] != ''){
-				$update['Status'] .= ' with '.$inputs['concernEmail_cc'].' as CC';
+			if(!empty($inputs['concernEmail_cc'])){
+				$update['Status'] .= ' With CC of: ';
+				foreach($inputs['concernEmail_cc'] as $cc){
+					$update['Status'] .= $cc.', ';
+				}
 			}
-
+			
 		}else{
 
 			$update['Status'] = 'Failed Sending to: '.$inputs['concernEmail'];
-			if($inputs['concernEmail_cc'] != ''){
-				$update['Status'] .= ' with '.$inputs['concernEmail_cc'].' as CC';
+			if(!empty($inputs['concernEmail_cc'])){
+				$update['Status'] .= ' With CC of: ';
+				foreach($inputs['concernEmail_cc'] as $cc){
+					$update['Status'] .= $cc.', ';
+				}
 			}
+			
 		}
 
 		return $this->Programs->UpdateInquiry($inputs['inquiryID'],$update);

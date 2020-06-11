@@ -48,6 +48,7 @@ class Programs extends CI_Model{
 	}
 	public function getEmailCC($input){
 
+		/*
 		$this->db->where('Topic_ID',$input['concern']);
 		$this->db->where('Category_ID',$input['studentlevel']);
 		$this->db->where('Program_ID',$input['studentprogram']);
@@ -55,6 +56,11 @@ class Programs extends CI_Model{
 		$this->db->where('valid',1);
 		$this->db->limit(1);
 		$result = $this->db->get('helpdeskemails');
+		return $result->result_array();
+		*/
+		$this->db->where('Email_ID',$input['ID']);
+		$this->db->where('Valid',1);
+		$result = $this->db->get('helpdesk_cc');
 		return $result->result_array();
 
 	}
