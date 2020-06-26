@@ -305,7 +305,7 @@ function filterConcernChoices(choice = 'none', enrolled = 1){
             choices = {
                 'bed':['Admission','Finance','Grades','Documents','Library','Others'],
                 'shs':['Admission','Finance','Grades','Documents','Library','Others'],
-                'hed':['Admission','Finance','Grades','Documents','Library','Others'],
+                'hed':['Admission','Finance','Grades','Documents','Library','Student Portal','SDCA Gmail','Others'],
                 'none':['Admission'],
             };
         }else{
